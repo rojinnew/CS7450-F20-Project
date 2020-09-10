@@ -13,13 +13,13 @@ import wikipediaapi
 import pandas as pd
 
 def print_categorymembers(categorymembers, level, max_level, levels, prev):
-    """parsing the result and create a hierarchy."""
+    """it gets page categories and creates a dictionary."""
     print("level", level)
     print("max level", max_level)
     idx = 0
     for cat in categorymembers.values():
         print("%s %s (ns: %d)" % ("*" * (level + 1), cat.title, cat.ns))
-        levels[level] += [prev + "."+ str(idx)+ "." +cat.title]
+        levels[level] += [prev + "."+ str(idx)+ "." + cat.title]
         idx += 1
         if cat.ns == wikipediaapi.Namespace.CATEGORY and level < max_level:
             print_categorymembers(cat.categorymembers, level + 1, max_level, levels, \
