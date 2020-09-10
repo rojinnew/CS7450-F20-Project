@@ -6,28 +6,26 @@
         Date last modified: 9/7/2020
 	Python Version: 3.7.1
 	Execute: $ [python3.7] marvel_data.py
-	Usage: marvel dataset 
+	Usage: marvel dataset
     Resource: https://www.wikidata.org/wiki/Wikidata:SPARQL_tutorial
 """
 import pandas as pd
 from SPARQLWrapper import SPARQLWrapper, JSON
 
-
 ENDPOINT_URL = "https://query.wikidata.org/sparql"
 
-
-QUERY =  """ SELECT ?name ?nameLabel ?pic ?gender ?genderLabel ?ability ?abilityLabel 
-       ?occupation ?occupationLabel ?citizenship ?citizenshipLabel 
+QUERY = """ SELECT ?name ?nameLabel ?pic ?gender ?genderLabel ?ability ?abilityLabel
+       ?occupation ?occupationLabel ?citizenship ?citizenshipLabel
        ?placeOfBirth ?placeOfBirthLabel ?dateOfBirth ?dateOfBirthLabel
-       ?unmarriedPartner ?unmarriedPartnerLabel 
+       ?unmarriedPartner ?unmarriedPartnerLabel
        ?spouse ?spouseLabel ?father ?fatherLabel
-       ?sibling ?siblingLabel ?child ?childLabel ?creator ?creatorLabel 
+       ?sibling ?siblingLabel ?child ?childLabel ?creator ?creatorLabel
        ?enemyOf ?enemyOfLabel
-       ?derivativeWork ?derivativeWorkLabel 
+       ?derivativeWork ?derivativeWorkLabel
 WHERE
 {
-    ?name wdt:P31 wd:Q1114461 . # ?name    instance of     comics character
-    ?name wdt:P1080 wd:Q931597. # from narrative universe
+    ?name wdt:P31 wd:Q1114461 .#instance of comics character
+    ?name wdt:P1080 wd:Q931597. #from narrative universe
     optional{?name wdt:P18 ?pic}.
     ?name wdt:P21 ?gender.
     ?name wdt:P2563 ?ability.
@@ -43,10 +41,9 @@ WHERE
     optional{?name wdt:P170 ?creator}.
     optional{?name wdt:P7047 ?enemyOf}.
     optional{?name wdt:P4969 ?derivativeWork}.
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en".}
 }
 limit 500 """
-
 CONTACT = {
     'project-name': "TexCompare",
     'website': "https://github.com/AdamCoscia/CS7450-F20-Project",
@@ -71,18 +68,18 @@ def main():
     data = parsed["results"]["bindings"]
 
     # select the headers
-    headers = ["name", "gender", "ability", "occupation", "citizenship", "placeOfBirth", "dateOfBirth", 
-               "unmarriedPartner", "spouse","father","sibling","child", "creator", "enemyOf", "derivativeWork"]
+    headers = ["name", "gender", "ability", "occupation", "citizenship", "placeOfBirth", \
+               "dateOfBirth", "unmarriedPartner", "spouse", "father", "sibling", "child", \
+               "creator", "enemyOf", "derivativeWork"]
     new_headers = []
-    for h in headers:
-        new_headers += [h+".value",h+"Label.value"]
-    new_headers += ["pic.value"] 
-    
-    # save the data and edit the header columns 
-    df = pd.json_normalize(data)
-    df = df[new_headers] 
-    df.columns = df.columns.str.replace(".value", "")
-    df.to_csv("marvel_data.csv")
+    for header in headers:
+        new_headers += [header+".value", header+"Label.value"]
+    new_headers += ["pic.value"]
+    # save the data and edit the header columns
+    data_frame = pd.json_normalize(data)
+    data_frame = data_frame[new_headers]
+    data_frame.columns = data_frame.columns.str.replace(".value", "")
+    data_frame.to_csv("output/marvel_data.csv")
 
 if __name__ == "__main__":
     main()
